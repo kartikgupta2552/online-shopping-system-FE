@@ -4,3 +4,27 @@ target
 *.iml
 .idea
 
+# Node modules & cache
+node_modules
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+
+# Environment files
+.env
+.env.*.local
+
+# Build artifacts
+dist
+
+# Logs
+logs
+*.log
+
+# Git & Editor configs
+.git
+.gitignore
+.DS_Store
+.vscode
+.idea
+*.swp

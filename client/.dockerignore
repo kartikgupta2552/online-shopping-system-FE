@@ -4,3 +4,28 @@ dist
 *.log
 .git
 
+# Node modules & cache
+node_modules
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+
+# Environment files
+.env
+.env.*.local
+
+# Build artifacts
+build
+dist
+
+# Logs
+logs
+*.log
+
+# Git & Editor configs
+.git
+.gitignore
+.DS_Store
+.vscode
+.idea
+*.swp
