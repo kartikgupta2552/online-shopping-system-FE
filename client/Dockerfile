@@ -1,32 +1,44 @@
-# 1️⃣ Use a tiny Node image (just for build)
+# -----------------------
+# Stage 1 — Builder
+# -----------------------
 FROM node:20-alpine AS builder
 
-# 2️⃣ Set working directory INSIDE the container to /app
+# Enable Yarn via Corepack
+RUN corepack enable
+
+# Set working directory
 WORKDIR /app
 
-# 3️⃣ Copy the package files (dependency info)
+# Copy only package.json + yarn.lock first for caching
 COPY package.json yarn.lock ./
 
-# 4️⃣ Install dependencies, silent so it doesn't vomit a wall of logs
-RUN yarn install --frozen-lockfile --silent
+# Install dependencies (immutable ensures lockfile sync)
+RUN yarn install --immutable
 
-# 5️⃣ Copy the rest of your source code in (everything else)
+# Copy rest of the application source code
 COPY . .
 
-# 6️⃣ Run the Vite build script (output: /app/dist)
-RUN npm run build
+# Build the production bundle
+RUN yarn build
 
-# 7️⃣ Use small Nginx image for static webserver
-FROM nginx:1.25-alpine
 
-# 8️⃣ Copy Nginx config if you want custom routes (optional)
-# COPY nginx.conf /etc/nginx/nginx.conf
+# -----------------------
+# Stage 2 — Runner
+# -----------------------
+FROM node:20-alpine AS runner
 
-# 9️⃣ Copy build files from previous stage to Nginx HTML dir
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# 1️⃣0️⃣ Expose port (let’s default to 80 for prod)
-EXPOSE 80
+# Copy only built output and needed files from builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./
 
-# 1️⃣1️⃣ Start Nginx (official image's CMD handles this)
+# Install only production dependencies
+RUN yarn install --immutable --production
+
+# Expose port (adjust if different)
+EXPOSE 5173
+
+# Start the app (adjust if using serve or similar)
+CMD ["yarn", "preview"]
 
