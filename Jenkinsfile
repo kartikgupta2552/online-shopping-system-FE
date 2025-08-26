@@ -25,7 +25,7 @@ pipeline {
       steps {
         echo 'Deploying to local Mac folder...'
         // Copy the build folder to a local directory, replace with your actual local target path
-        sh 'cp -r build/* /Users/your-mac-user/deploy-folder/'  
+        sh 'cp -r build/* /Users/tushar/test'  
       }
     }
   }
